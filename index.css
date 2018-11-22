@@ -1,0 +1,102 @@
+body {
+        
+}
+
+#app {
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-content:stretch;
+    flex-wrap:wrap;    
+}
+
+.form-item {
+    background: yellow;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+
+#submit, #prepare-submit {
+    font-size: 20px;
+    text-decoration: none;
+    padding: 10px;
+    color: black;
+    text-align: center;
+}
+
+#proverb {
+    font-size: 20px;
+    font-family:fantasy;
+    width: 500px;
+}
+
+#result-table, #prepare-table {
+    margin-top: 20px;
+    border: 2px solid black;
+}
+
+p,td {
+    color: black;
+    font-size: 17px;
+    font-family: sans-serif;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    
+    padding: 0px;
+}
+
+input {
+    font-size: 18px;
+    padding: 10px;
+    width: 300px;
+}
+
+.day {
+    border-right: 0px solid black;
+    height: 40px;
+    width: 17px;
+}
+
+.kday {
+    border-right: 1px solid black;
+}
+
+.green {
+    color: green;
+    background: green;
+}
+
+.red {
+    background: red;
+}
+
+.white {
+    color: white;
+}
+
+.chbx {
+    width: 15px;
+    height: 42px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.tbx {
+    width: 12px;
+    padding: 0px;
+    margin: 0px;
+}
+
+.shtbx {
+    width: 40px;
+    padding: 0px;
+    margin: 0px;
+}

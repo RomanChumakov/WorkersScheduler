@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Программа для распределения смен между работниками организации</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src ="underscore-min.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div id = 'app'>
+        <form class="form" action="submit">
+            <input id="workers-quantity" class="form-item" type="text" placeholder="Количество дежурных"/>
+            <input id="day-quantity" class="form-item" type="text" placeholder="Количество дней в месяце"/>
+            <input id="weekday" class="form-item" type="text" placeholder="День недели первого дня (пн, вт, ...)"/>
+            <a href = "#" autofocus="true" class="form-item" id = "prepare-submit">Ввести данные</a>
+        </form>
+        
+        <table id="prepare-table">
+        
+        <a href = "#" autofocus="false" class="form-item" id = "submit">Посмотреть результат</a>
+        
+        <table id="result-table">
+        </table>
+    </div>
+    <script src ="index.js"></script>
+</body>
+</html>
