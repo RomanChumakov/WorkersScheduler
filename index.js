@@ -1,6 +1,6 @@
     //Константы///////////////////////////////////////////////////////////////////////////////
 var weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"],
-    vacationFine = 9, //штраф за работу в день, в который работник не должен работать (отпуск, болезнь, сильная переработка и т.д.)
+    vacationFine = 20, //штраф за работу в день, в который работник не должен работать (отпуск, болезнь, сильная переработка и т.д.)
     morningAfterEveningFine = 2, //штраф за работу после ночной смены
     throwOneFine = 2, //штраф за работу через смену
     overtimeFine = 1.5, //штраф за переработку по количеству смен
@@ -15,10 +15,12 @@ var weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"],
     workers = [], // массив работников (каждый элемент есть массив смен за месяц (отпуска указаны))
     shiftsByDay = [], // массив количества смен по дням
     shiftAmount = [], // массив количества смен по работникам
+    
     preferences = [], // предпочтительность выбора сотрудников
-    shifts = [],      // "отработанные" смены
-    dayOffAmount = [],// количество выходных
+    shifts = [],      // "отработанные" смены по работникам
+    dayOffAmount = [],// количество выходных по работникам
     shiftRelation = 0,// отношение прошедших смен ко всем сменам месяца
+    vacationAmount = [],//количество дней отпуска по работникам
 
     i, j; // итераторы
 
@@ -126,6 +128,7 @@ $("#prepare-submit").on("click", function() {
             input.type = "checkbox";
             input.id = i + "cbx" + j;
             input.className = "chbx";
+            //if (i == 1) input.checked = true;
             td.appendChild(input);
             document.getElementById("prepare-worker"+i).appendChild(td);
         }
@@ -151,14 +154,17 @@ $("#prepare-submit").on("click", function() {
 });
 
 $("#submit").on("click", function(){
+    
+    //очистка массивов для перерисовки
+    workers = [];
+    shiftsByDay= [];
+    shiftAmount = [];
+    
+    //проверки входных данных и заполнение массивов
     if (firstWeekDay===undefined) {
         alert("Для начала введите все необходимые данные");
         return;
     }
-    
-    workers = [];
-    shiftsByDay= [];
-    
     for (j=0; j< 3*dayAmount; j++) {
         while (!(+($("#tbx" + (j+1)).val())>0)) {
             alert("Неверный формат количества дежурств! Требуются натуральные числа!");
@@ -166,9 +172,6 @@ $("#submit").on("click", function(){
         }
         shiftsByDay[j] = +$("#tbx" + (j+1)).val();
     }
-    
-    shiftAmount = [];
-    
     for (j=0; j< workersAmount; j++) {
         while (!(+($("#shtbx" + j).val())>0)) {
             alert("Неверный формат количества смен! Требуются натуральные числа!");
@@ -176,34 +179,33 @@ $("#submit").on("click", function(){
         }
         shiftAmount[j] = +$("#shtbx" + j).val();
     }
-
     for (i = 0; i<workersAmount;i++) {
+        vacationAmount[i]=0;
         workers[i] = [];
         for (j=0; j< 3*dayAmount; j++) {
             workers[i][j] = ($("#" + i + "cbx" + (j+1)).is(":checked") ? vacationFine : 1);
+            vacationAmount[i]+=($("#" + i + "cbx" + (j+1)).is(":checked") ? 1 : 0);
         }
-    }
+    } 
     
-    
-    /////////////////////////////////////////////////////////////////////////////////
-    
+    //сброс массивов
     preferences = [];
     shifts = [];
     dayOffAmount = [];
     
+    //инициализация выходных и отработанных смен
     for (j=0; j< workersAmount; j++)
     {
         dayOffAmount[j] = 0;
-        shifts[j] = 0.9;
+        shifts[j] = 0; //что-бы не делить на ноль, делаю пока так, хотя в реале 0
     }
     
     for (i = 0; i<3*dayAmount; i++) {
-        shiftRelation = i/(3*dayAmount);
-        
         for (j=0; j< workersAmount; j++) {
-            preferences[j] = shiftRelation/shifts[j]*shiftAmount[j];
+            shiftRelation = (i+1)/(3*dayAmount+1-vacationAmount[j]);
+            preferences[j] = shiftRelation/(shifts[j]+1)*(shiftAmount[j]);
             if (i<3*(dayAmount - 1) && workers[j][i]!=vacationFine && (workers[j][(i-i%3)+3] == vacationFine || workers[j][(i-i%3)+4] == vacationFine || workers[j][(i-i%3)+5] == vacationFine)) workers[j][i] = (workers[j][i]/1.7).toFixed(1);
-            console.log("Работник: " + j + ", смена: " + i + ", предпочтительность: " + preferences[j] + ", s: " + shifts[j] + ", sA: " + shiftAmount[j]);
+            console.log("Работник: " + j + ", смена: " + i + ", предпочтительность: " + preferences[j] + ", см.отр: " + shifts[j] + ", sh.rel: " + shiftRelation+ + ", sh.rel: " + shiftRelation);
         }
         
         var maximums = [];
@@ -259,13 +261,13 @@ $("#submit").on("click", function(){
         }
     }
     
-    console.log(workers);
-
+    //очистка таблицы результатов
     var table = document.getElementById("result-table");
     while (table.firstChild) {
         table.removeChild(table.firstChild);
     }
     
+    //заполнение массива выходных дней
     for (j=0; j< workersAmount; j++) {
         for (i = 0; i<3*dayAmount; i+=3) {
             if (workers[j][i]!=0 && workers[j][i+1]!=0 && workers[j][i+2]!=0)
@@ -274,8 +276,6 @@ $("#submit").on("click", function(){
     }
     
     //отрисовка конечной таблицы со сменами//////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
     var tr = document.createElement("tr");
     tr.id = "mounth-day";
     document.getElementById("result-table").appendChild(tr);
@@ -319,11 +319,10 @@ $("#submit").on("click", function(){
     document.getElementById("worker").appendChild(td);
     
     for (i = 0; i<workersAmount;i++) {
-    
         var tr = document.createElement("tr");
         tr.id = "worker" + i;
         document.getElementById("result-table").appendChild(tr);
-        
+    
         var td = document.createElement("td");
         td.appendChild(document.createTextNode("Работник "+ i + ":"));
         document.getElementById("worker"+i).appendChild(td);
@@ -358,4 +357,3 @@ $("#submit").on("click", function(){
         document.getElementById("worker"+i).appendChild(td);
     }
 });
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
