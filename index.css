@@ -41,6 +41,7 @@ body {
 #result-table, #prepare-table {
     margin-top: 20px;
     border: 2px solid black;
+    margin-bottom: 20px;
 }
 
 p,td {
@@ -69,22 +70,34 @@ input {
     border-right: 1px solid black;
 }
 
-.green {
-    color: green;
-    background: green;
+.gray {
+    color: gray;
+    background: gray;
+}
+.black {
+    color: black;
+    background: black;
+}
+.red {
+    color: red;
+    background: red;
 }
 
-.red {
-    background: red;
+.yellow {
+    background: yellow;
+}
+
+.green {
+    background: green;
 }
 
 .white {
     color: white;
 }
 
-.chbx {
-    width: 15px;
-    height: 42px;
+.btn-item {
+    width: 20px;
+    height: 30px;
     padding: 0px;
     margin: 0px;
 }
